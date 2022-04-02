@@ -24,13 +24,13 @@
 <body class="body">
 
     <section class="center-align">
-        <h2 class="header-font">Is this cycling weather?</h2>
+        <h2 class="header-font">National Park Locator</h2>
         <br>
         <form id="weather-form">
-            <label class="active" for="weather-forms">Enter City</label>
+            <label class="active" for="weather-forms">Enter State Abbreviation</label>
             <input type="text" id="city" class="validate center-align input-font">
            
-            <button type="submit" class="btn">Check Weather</button>
+            <button class="btn">Find National Park</button>
         </form>
 
        
@@ -41,6 +41,13 @@
         </section>
 
     </main>
+
+    <table class="card-body table mx-auto my-4">
+        <th class="results-p">
+          
+        </th>
+        <tbody id="repo-table" class="mx-auto text-center"></tbody>
+      </table>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
