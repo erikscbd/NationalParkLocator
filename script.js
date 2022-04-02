@@ -2,11 +2,12 @@ var tableBody = document.getElementById('repo-table');
 var cityNameEl = document.querySelector('#city');
 var weatherFormEl = document.querySelector('#weather-form');
 var resultsParagragh = document.querySelector('.results-p');
+
 console.log(weatherFormEl);
 var formSubmitHandler = function (event) {
     console.log(event)
-    event.preventDefault();
-    event.stopPropagation()
+     event.preventDefault();
+    // event.stopPropagation();
 
     var stateCode = cityNameEl.value.trim();
 
@@ -34,7 +35,16 @@ function getApi(state) {
             console.log('DATA', data.data[0].addresses[0])
 
             var resultsP = document.createElement('p');
+            const table = document.querySelector('#repo-table')
+            table.innerHTML = '';
+            resultsParagragh.innerHTML = '';
             for (var i = 0; i < data.data.length; i++) {
+                var cityFromRequestUrl = data.data[i].addresses[0].city;
+                var apikey = 'd42360dd80194eb3d86e1aac7890342a';
+                var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityFromRequestUrl + '&appid=' + apikey
+                console.log(weatherUrl);
+                fetch(weatherUrl)
+                console.log(data.data[i].addresses[0].city)
                 console.log('DATA', data)
                 
                 var createTableRow = document.createElement('tr');
@@ -55,6 +65,7 @@ function getApi(state) {
                 var sunday = document.createElement('li');
                 var locationResults = document.createElement('p');
                 var countryResults = document.createElement('p');
+                var temp = document.createElement('p');
                 
 
                 resultsP.textContent = 'Results'
@@ -74,6 +85,8 @@ function getApi(state) {
                 saturday.textContent = 'Saturday: ' + data.data[i].operatingHours[0].standardHours.saturday;
                 sunday.textContent = 'Sunday: ' + data.data[i].operatingHours[0].standardHours.sunday;
                 locationResults.textContent = data.data[i].addresses[0].city;
+                countryResults.textContent = data.data[i].states;
+                temp.textContent = data.weather[0].description;
                 
                 resultsParagragh.appendChild(resultsP);
                 tableData.appendChild(parkName);
@@ -92,6 +105,7 @@ function getApi(state) {
                 hoursList.appendChild(sunday);
                 tableData.appendChild(locationResults);
                 tableData.appendChild(countryResults)
+                tableData.appendChild(temp);
                 createTableRow.appendChild(tableData);
                 tableBody.appendChild(createTableRow);
             }
