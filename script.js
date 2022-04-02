@@ -2,6 +2,7 @@ var tableBody = document.getElementById('repo-table');
 var cityNameEl = document.querySelector('#city');
 var weatherFormEl = document.querySelector('#weather-form');
 var resultsParagragh = document.querySelector('.results-p');
+var mainInfo = document.querySelector('#park-weather-info');
 
 console.log(weatherFormEl);
 var formSubmitHandler = function (event) {
@@ -129,6 +130,7 @@ function getApi(state) {
                         tableData.appendChild(temp);
                         createTableRow.appendChild(tableData);
                         tableBody.appendChild(createTableRow);
+                        mainInfo.appendChild(tableBody);
                     }
                     )
 
