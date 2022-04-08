@@ -6,9 +6,20 @@
        flex-direction: column;
    
    }
+
+   .active {
+text-align: center;
+
+   }
    .header-font {
    
        font-family: 'Palette Mosaic', cursive;
+       padding-bottom: 20px;
+   }
+
+   .input-field {
+
+
    }
    .input-font {
    
@@ -35,4 +46,8 @@
        
      }
    
+     .center-align {
+margin: auto;
+        
+     }
    

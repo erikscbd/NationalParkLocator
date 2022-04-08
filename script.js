@@ -204,9 +204,7 @@ function getApi(state) {
             console.log(error)
         })
 
-    // $(document).ready(function(){
-    //     $('.materialboxed').materialbox();
-    //   });
+ 
 
 }
 
@@ -229,3 +227,10 @@ function showMap(latitude, longitude,mapElement) {
         map: map,
     });
 }
+
+
+
+$('#textarea1').val('New Text');
+M.textareaAutoResize($('#textarea1'));
+      
+
