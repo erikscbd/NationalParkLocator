@@ -173,7 +173,7 @@ function getApi(state) {
 
                             tempMin.textContent = 'Low: ' + convertToF(weatherData.main.temp_min) + ' ';
 
-                            tempMax.textContent = 'Max: ' + convertToF(weatherData.main.temp_max) + ' ';
+                            tempMax.textContent = 'High: ' + convertToF(weatherData.main.temp_max) + ' ';
 
                             tempDescription.textContent = weatherData.weather[0].description + ' ';
                         }
