@@ -163,8 +163,8 @@ function getApi(state) {
                         friday.textContent = 'Friday: ' + data.data[i].operatingHours[0].standardHours.friday;
                         saturday.textContent = 'Saturday: ' + data.data[i].operatingHours[0].standardHours.saturday;
                         sunday.textContent = 'Sunday: ' + data.data[i].operatingHours[0].standardHours.sunday;
-                        locationResults.textContent = data.data[i].addresses[0].city;
-                        countryResults.textContent = data.data[i].states;
+                        locationResults.textContent = data.data[i].addresses[0].city + ', ' + data.data[i].states;
+                        
                         if (weatherData.cod == 404) {
 
                         } else {
@@ -173,13 +173,14 @@ function getApi(state) {
 
                             tempMin.textContent = 'Low: ' + convertToF(weatherData.main.temp_min) + ' ';
 
-                            tempMax.textContent = 'Max: ' + convertToF(weatherData.main.temp_max) + ' ';
+                            tempMax.textContent = 'High: ' + convertToF(weatherData.main.temp_max) + ' ';
 
                             tempDescription.textContent = weatherData.weather[0].description + ' ';
                         }
 
 
                         resultsParagragh.appendChild(resultsP);
+                        resultsParagragh.classList = 'input-font';
                         tableData.appendChild(parkName);
                         tableData.appendChild(parkImg);
                         tableData.appendChild(description);
@@ -258,5 +259,8 @@ function showMap(latitude, longitude, mapElement) {
 
 $('#textarea1').val('New Text');
 M.textareaAutoResize($('#textarea1'));
+
+
+
 
 
