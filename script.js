@@ -2,8 +2,30 @@ var tableBody = document.getElementById('repo-table');
 var cityNameEl = document.querySelector('#city');
 var weatherFormEl = document.querySelector('#weather-form');
 var resultsParagragh = document.querySelector('.results-p');
+var markerArray = [];
+var favoritesArray = [];
 
-console.log(weatherFormEl);
+var storedFavorites = localStorage.getItem('favorites');
+
+if (storedFavorites !== null) {
+
+favoritesArray = JSON.parse(storedFavorites);
+}
+
+console.log(storedFavorites);
+console.log(favoritesArray);
+
+function convertToF(kelvin) {
+    return Math.floor((kelvin - 273.15) * 1.8) + 32
+}
+
+function clearOverlays() {
+    for (var i = 0; i < markerArray.length; i++) {
+        markerArray[i].setMap(null);
+    }
+    markerArray.length = 0;
+}
+
 var formSubmitHandler = function (event) {
     console.log(event)
     event.preventDefault();
@@ -18,10 +40,32 @@ var formSubmitHandler = function (event) {
         getApi(stateCode);
     }
 }
+let map;
 
+// Initialize and add the map
+function initMap() {
+    // The location of Uluru
+
+    // The map, centered at Uluru
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 3,
+        center: { lat: 37.09, lng: -95.129 },
+    });
+
+}
+
+
+//   google.maps.Map.prototype.clearMarkers = function() {
+//     for(var i=0; i < this.markers.length; i++){
+//         this.markers[i].setMap(null);
+//     }
+//     this.markers = new Array();
+// };
 
 
 function getApi(state) {
+
+    clearOverlays();
 
     var requestUrl = 'https://developer.nps.gov/api/v1/parks?api_key=n0NWS1TTSoP9PTPB2SwRlKnJTdr58CkVD79Lvx9g&stateCode=' + state;
 
@@ -41,14 +85,19 @@ function getApi(state) {
             for (let i = 0; i <= data.data.length; i++) {
                 var cityFromRequestUrl = data.data[i].addresses[0].city;
 
+                let cityLat = data.data[i].latitude;
+                let cityLon = data.data[i].longitude;
+
+                console.log(cityLat);
+                console.log(cityLon);
 
                 var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityFromRequestUrl + '&appid=d42360dd80194eb3d86e1aac7890342a';
                 var encodedUrl = encodeURI(weatherUrl);
                 console.log(encodedUrl);
                 fetch(encodedUrl)
-                .catch(function (error){
-                    console.log(error);
-                })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
                     .then(function (response) {
 
                         // console.log(response)
@@ -61,12 +110,13 @@ function getApi(state) {
 
                         console.log('DATA', data.data)
                         console.log(i);
-                        console.log('WEATHER', weatherData);
+                        console.log('WEATHERDATA', weatherData);
 
                         var createTableRow = document.createElement('tr');
                         var tableData = document.createElement('td');
                         var parkName = document.createElement('h1')
                         var parkImg = document.createElement('img')
+                        parkImg.classList = 'responsive-img';
                         var description = document.createElement('p');
                         var weatherInfo = document.createElement('p')
                         var entranceFees = document.createElement('p');
@@ -81,7 +131,20 @@ function getApi(state) {
                         var sunday = document.createElement('li');
                         var locationResults = document.createElement('p');
                         var countryResults = document.createElement('p');
-                        var temp = document.createElement('p');
+                        var tempCard = document.createElement('div');
+                        tempCard.classList = 'card horizontal teal';
+
+                        var favoritesBtn = document.createElement('button');
+                        favoritesBtn.textContent = "Favorite"
+                        favoritesBtn.setAttribute("data-name", data.data[i].fullName);
+
+                        console.log(data.data[i].fullName);
+
+
+                        var tempDescription = document.createElement('p');
+                        var tempCurrent = document.createElement('p');
+                        var tempMin = document.createElement('p');
+                        var tempMax = document.createElement('p');
 
 
                         resultsP.textContent = 'Results'
@@ -102,12 +165,19 @@ function getApi(state) {
                         sunday.textContent = 'Sunday: ' + data.data[i].operatingHours[0].standardHours.sunday;
                         locationResults.textContent = data.data[i].addresses[0].city;
                         countryResults.textContent = data.data[i].states;
-                        if(weatherData.cod == 404){
-                            
-                        }else{
-                            temp.textContent = weatherData.weather[0].description;
+                        if (weatherData.cod == 404) {
+
+                        } else {
+
+                            tempCurrent.textContent = 'Temperature: ' + convertToF(weatherData.main.temp) + ' ';
+
+                            tempMin.textContent = 'Low: ' + convertToF(weatherData.main.temp_min) + ' ';
+
+                            tempMax.textContent = 'Max: ' + convertToF(weatherData.main.temp_max) + ' ';
+
+                            tempDescription.textContent = weatherData.weather[0].description + ' ';
                         }
-                        
+
 
                         resultsParagragh.appendChild(resultsP);
                         tableData.appendChild(parkName);
@@ -126,9 +196,25 @@ function getApi(state) {
                         hoursList.appendChild(sunday);
                         tableData.appendChild(locationResults);
                         tableData.appendChild(countryResults);
-                        tableData.appendChild(temp);
+                        tableData.appendChild(tempCard);
+                        tempCard.appendChild(tempCurrent);
+                        tempCard.appendChild(tempMax);
+                        tempCard.appendChild(tempMin);
+                        tempCard.appendChild(tempDescription);
                         createTableRow.appendChild(tableData);
                         tableBody.appendChild(createTableRow);
+                        tableData.appendChild(favoritesBtn);
+                        favoritesBtn.addEventListener("click", handleFavoritesButton);
+                        favoritesBtn.classList = 'favorites btn';
+                        console.log(cityLat, cityLon);
+                        const markerCoordinates = { lat: parseFloat(cityLat), lng: parseFloat(cityLon) };
+
+
+                        var marker = new google.maps.Marker({
+                            position: markerCoordinates,
+                            map: map,
+                        })
+                        markerArray.push(marker);
                     }
                     )
 
@@ -137,11 +223,40 @@ function getApi(state) {
         .catch(function (error) {
             console.log(error)
         })
+
+}
+function handleFavoritesButton(event) {
+
+    var parkName = event.target.dataset.name
+    console.log(parkName);
+    favoritesArray.push(parkName);
+    localStorage.setItem('favorites', JSON.stringify(favoritesArray));
+
 }
 
 
 weatherFormEl.addEventListener('click', formSubmitHandler)
 
 
+// Initialize and add the map
+function showMap(latitude, longitude, mapElement) {
+    // The location of Uluru
+    const uluru = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+    // The map, centered at Uluru
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: uluru,
+    });
+    // The marker, positioned at Uluru
+    const marker = new google.maps.Marker({
+        position: uluru,
+        map: map,
+    });
+}
+
+
+
+$('#textarea1').val('New Text');
+M.textareaAutoResize($('#textarea1'));
 
 
